@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <form>
+        <label>
+            <input type="radio" name="radio" value="1" onchange="handleChange()" /> Option 1
+        </label>
+        <label>
+            <input type="radio" name="radio" value="2" /> Option 2
+        </label>
+        <label>
+            <input type="radio" name="radio" value="3" /> Option 3
+        </label>
+    </form>
+
+    <script>
+        // 获取所有 name 为 "option" 的 radio 按钮
+        const radios = document.querySelectorAll('input[name="radio"]');
+
+        // 为每个 radio 按钮添加 change 事件监听器
+        radios.forEach((radio) => {
+            radio.addEventListener('change', (event) => {
+                console.log('选中的值:', event, event.target.value);
+            });
+        });
+    </script>
+
+
+    <!-- <form>
+        <label>
+            <input type="radio" value="1" /> Option 1
+        </label>
+        <label>
+            <input type="radio" value="2" /> Option 2
+        </label>
+        <label>
+            <input type="radio" value="3" /> Option 3
+        </label>
+    </form>
+
+    <script>
+        // 获取所有 name 为 "option" 的 radio 按钮
+        const radios = document.querySelectorAll('input');
+
+        // 为每个 radio 按钮添加 change 事件监听器
+        radios.forEach((radio) => {
+            radio.addEventListener('change', (event) => {
+                console.log('选中的值:', event, event.target.value);
+            });
+
+            radio.addEventListener('click', (event) => {
+                console.log('选中的值:', event, event.target.value);
+            });
+        });
+    </script> -->
+</body>
+
+</html>

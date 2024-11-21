@@ -5,9 +5,34 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Vite + React + TS</title>
+    <style>
+      #box {
+        width: 100px;
+        height: 100px;
+        background: blue;
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+
+    <div id="box" style="width: 200px; height: 100px; background: blue;"></div>
+    <script>
+      const box = document.querySelector('#box');
+
+      setTimeout(() => {
+        box.style.width = '20px';
+      }, 3000);
+
+      setTimeout(() => {
+        box.style.width = '30px';
+      }, 4000);
+
+      const resizeObserver = new ResizeObserver((entries) => {
+        console.log('当前大小', entries);
+      });
+      resizeObserver.observe(box);
+    </script>
   </body>
 </html>

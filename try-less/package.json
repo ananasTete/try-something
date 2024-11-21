@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "less": "^4.2.0"
+  },
+  "scripts": {
+    "less": "lessc index.less index.css"
+  }
+}

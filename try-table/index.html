@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        table {
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            border: 1px solid black;
+            text-align: center;
+        }
+
+        .first-col {
+            background-color: aqua;
+            /* visibility: collapse;  */
+        }
+
+        .second-col {
+            background-color: blueviolet;
+        }
+    </style>
+</head>
+
+<body>
+    <table id="table">
+        <colgroup style="background-color: aqua;">
+            <col span="2" style="border: 2px dashed red">
+            </col>
+        </colgroup>
+        <colgroup style="background-color: azure;"></colgroup>
+        <thead>
+            <tr>
+                <th>数字</th>
+                <th>字母</th>
+                <th>描述</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>3</td>
+                <td>A</td>
+                <td>A</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>B</td>
+                <td>B</td>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>C</td>
+                <td>C</td>
+            </tr>
+        </tbody>
+    </table>
+
+
+    <script>
+        const tableDom = document.getElementById('table');
+        console.log(tableDom);
+        console.log(tableDom.caption);
+        console.log(tableDom.tHead);
+        console.log(tableDom.tFoot);
+        console.log(tableDom.tBodies); // HTMLCollection [tbody]
+
+        // tHead、tFoot、tBodies 中的 body都可以通过 x.rows 获取到 tr 组成的类数组对象，每个 tr 又可以通过 x.cells 获取到 td 组成的类数组对象。
+
+        // 每个 cell 都可以通过 cell.cellIndex 获取单元格在行中的索引。
+
+        console.log(Array.from(tableDom.tBodies[0].rows));
+        console.log(tableDom.tBodies[0].rows[0].cells[0]); // HTMLCollection [tr]
+
+        const headerCells = tableDom.tHead.rows[0].cells;
+        const tBody = tableDom.tBodies[0];
+        const rows = Array.from(tBody.rows);
+        for (const th of headerCells) {
+
+            th.addEventListener('click', () => {
+                const colIndex = th.cellIndex;
+                rows.sort((a, b) => {
+                    const aText = a.cells[colIndex].textContent;
+                    const bText = b.cells[colIndex].textContent;
+                    return aText.localeCompare(bText);
+                });
+                tBody.append(...rows);
+            })
+        }
+
+    </script>
+</body>
+
+</html>

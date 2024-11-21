@@ -1,22 +1,14 @@
-import "./App.css";
-import {ConfigProvider, useMessage} from './Message'
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
+import './App.css';
+import Portal from './components/Portal/Portal';
+import CopyToClipboard from './components/CopyToClipboard/CopyToClipboard';
 
 function Test() {
-    const message = useMessage();
-    return <button onClick={() => message.add({content: '123'})}>按钮</button>
+  return <div style={{ width: 100, height: 100, background: 'white' }}>123</div>;
 }
 
 function App() {
-
-
-    return (
-        <>
-            <ConfigProvider>
-                <Test/>
-            </ConfigProvider>
-
-        </>
-    );
+  return <></>;
 }
 
 export default App;

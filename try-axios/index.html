@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+
+<body>
+    <button id="btn">请求</button>
+    <script>
+        const btn = document.getElementById('btn');
+        // http://localhost:3000
+        btn.addEventListener('click', () => {
+
+            const urlParams = new URLSearchParams();
+            urlParams.append('age', 18);
+
+            const formData = new FormData();
+            formData.append('name', '张三');
+
+            // 发送 GET 请求
+            axios.get('http://localhost:3000/something', {
+                responseType: 'blob',
+            })
+                .then((response) => {
+                    console.log('GET 请求成功:', response);
+                })
+                .catch((error) => {
+                    console.error('GET 请求失败:', error);
+                });
+        });
+
+        
+    </script>
+</body>
+
+</html>

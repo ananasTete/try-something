@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <input type="file" id="filePicker" name="fileList" />
+    <script>
+        // 1. 大文件切片上传：使用 Blob.slice() 方法切片文件,然后将每个文件同时上传，即并发上传。
+        // 2， 并发控制：控制并发上传的数量，避免同时上传过多文件导致网络拥堵。定义一个数组，将每个 chunk 上传的 Promise 传入，当chunk上传成功时
+        // 从数组中移除，当数组长度小于并发数量时，继续上传下一个 chunk；否则等待现有数组中某个上传完成之后继续上传。
+
+
+        /* 点击上传 */
+
+        const filePicker = document.getElementById("filePicker");
+
+        filePicker.addEventListener("change", (event) => {
+            uploadFiles({
+                url: "http://localhost:3000/upload",
+                files: event.target.files,
+            }, (err, data) => {
+                console.log('结束', err, data);
+            })
+        });
+
+        /* 上传实现 */
+
+        const defaultChunkSize = 0.5 * 1024 * 1024;
+
+        function createChunk(file, size = defaultChunkSize) {
+            const chunks = [];
+            let accSize = 0;
+
+            while (accSize < file.size) {
+                const chunk = file.slice(accSize, accSize + size);
+                chunks.push(chunk);
+                accSize += size;
+            }
+
+            return chunks.map((chunk, index) => ({
+                file: chunk,
+                fileName: file.name,
+                index,
+                chunkLength: chunks.length,
+            }));
+        }
+
+        function upload(url, method, headers, file, onFileFinish) {
+            const formData = new FormData();
+            const { chunk, fileName, index, chunkLength } = file;
+            formData.append("fileName", fileName);
+            formData.append("index", index);
+            formData.append("file", chunk);
+            formData.append("chunkLength", chunkLength);
+
+            return fetch(url, {
+                method,
+                body: formData,
+                headers
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    onFileFinish(null, data, file);
+                })
+                .catch((error) => {
+                    onFileFinish(error, null, file);
+                });
+
+        }
+
+        function uploadFiles(params, onFileFinish) {
+            let { url, files, sliceSize = defaultChunkSize, asyncLimit = 3, method = "POST", headers = {} } = params;
+            files = [...files];
+            const chunks = [];
+            let curIndex = 0;
+
+            files.forEach((file) => {
+                if (file.size <= sliceSize) {
+                    chunks.push({
+                        file,
+                        fileName: file.name,
+                        index: 0,
+                        chunkLength: 1,
+                    });
+                } else {
+                    chunks.push(...createChunk(file, sliceSize));
+                }
+            });
+
+            debugger;
+
+            async function controlUpload() {
+                let i = 0;
+                const activeUploads = new Set();
+
+                while (i < chunks.length) {
+                    if (activeUploads.size <= asyncLimit) {
+                        const uploadPromise = upload(url, method, headers, chunks[i], onFileFinish);
+                        uploadPromise.finally(() => {
+                            activeUploads.delete(uploadPromise);
+                        });
+                        activeUploads.add(uploadPromise);
+                        i++;
+                    } else {
+                        await Promise.race(activeUploads);
+                    }
+                }
+
+                await Promise.all(activeUploads);
+            }
+
+            controlUpload();
+        }
+    </script>
+</body>
+
+</html>
